@@ -35,11 +35,13 @@ start_summarization = st.button("Summarize Video")
 if start_summarization and video_url:
     full_transcript = get_transcript(video_url)
     prompt = f"I read a YouTube video transcript that says: \"{full_transcript}\" I need to summarise the key points from the transcript."
-    response = openai.Completion.create(
-        engine="text-davinci-002",  
-        prompt=prompt, 
-        max_tokens=200
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt},
+        ]
     )
-    summary = response.choices[0].text.strip()
+    summary = response['choices'][0]['message']['content'].strip()
     st.subheader("Summary")
     st.write(summary)
